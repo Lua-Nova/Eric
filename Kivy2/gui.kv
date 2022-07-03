@@ -1,0 +1,101 @@
+#:kivy 2.1.0
+#:import random random
+WindowManager:
+    MenuWindow:
+
+    GameWindow:
+
+<MenuWindow@Screen>:
+    name: "menu"
+
+    MainMenu:
+<GameWindow@Screen>:
+    name: "game"
+
+    BoxLayout:
+        orientation: 'vertical'
+        size: root.size
+        GameTab:
+            size_hint: 1, 0.1
+            layout: layout
+        GameLayout:
+            id: layout
+        
+
+<MainMenu@BoxLayout>:
+    orientation: "vertical"
+    spacing: self.height / 80
+    padding: self.width/40, self.height/20 # [top, right, bottom, left]
+    
+    canvas.before:
+        Rectangle:
+            pos: root.pos
+            size: root.size
+            source: 'Mountains.png'
+
+    Label:
+        text: "Snake"
+        size_hint: 0.8, 0.4
+        pos_hint: {'center_x':0.5, 'center_y': 0.5}
+        font_size: 0.25 * self.width
+        color: 0, 1, 0, 1
+
+
+    Buttons:
+
+#:set button_size_hint 0.4
+<Buttons@BoxLayout>:
+    orientation: "vertical"
+    spacing: self.height/10
+    padding: 0, self.height/20
+
+    Button:
+        text: "start"
+        size_hint: button_size_hint, 1
+        pos_hint: {'center_x': 0.5}
+        on_press:
+            app.root.current = 'game'
+            app.root.transition.direction = 'right'
+
+    Button:
+        text: "options"
+        size_hint: button_size_hint, 1
+        pos_hint: {'center_x': 0.5}
+
+    Button:
+        text: "exit"
+        size_hint: button_size_hint, 1
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        on_release:
+            app.stop()
+
+<GameTab@BoxLayout>:
+    orientation: 'horizontal'
+    Button:
+        text: 'previous'
+        on_release: 
+            app.root.current = 'menu'
+            app.root.transition.direction = 'right'
+            app.root.clearcolor = (0, 0, 0, 0)
+    Button:
+        text: 'add body part'
+        on_press: 
+
+<GameLayout>:
+    size: root.size
+
+<Fruit>:
+    canvas:
+        Color:
+            rgb: (1,0,0)
+        Ellipse:
+            pos: self.pos
+            size: self.size
+
+<SnakeBodyPart>:
+    canvas:
+        Color:
+            rgb: (random.random(), random.random(), random.random())
+        Rectangle:
+            pos: self.pos
+            size: self.size

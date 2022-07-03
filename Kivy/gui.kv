@@ -1,0 +1,101 @@
+#:kivy 2.1.0
+
+#:import random random
+
+WindowManager:
+    Menu:
+    
+    Game:
+    
+<Menu@Screen>:
+    name: 'menu'
+    BoxLayout:    
+        orientation: "vertical"
+        spacing: root.height * 0.01
+        # padding: [dp(30), dp(10), dp(30), dp(10)] # [top, right, bottom, left]
+
+        canvas.before:
+            Rectangle:
+                pos: root.pos
+                size: root.size
+                source: 'Mountains.png'
+
+        Label:
+            text: "Snake"
+            size_hint: 0.8, 0.4
+            pos_hint: {'center_x':0.5}
+            font_size: 0.25 * self.width
+            color: 0, 1, 0, 0.7
+
+
+        Buttons:
+
+
+<Buttons@BoxLayout>:
+    orientation: "vertical"
+    spacing: root.height * 0.08
+    padding: 0, root.height * 0.1
+
+    Button:
+        text: "start"
+        size_hint: 0.4, 1
+        pos_hint: {'center_x': 0.5}
+        on_release:
+            app.root.current = 'game'
+            app.root.transition.direction = 'left'
+            app.root.clearcolor = (.1, .8, .9, 9)
+        
+
+    Button:
+        text: "options"
+        size_hint: 0.4, 1
+        pos_hint: {'center_x': 0.5}
+
+    Button:
+        text: "exit"
+        size_hint: 0.4, 1
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        on_release:
+            app.stop()
+        
+            
+
+<Game@Screen>:
+    name: 'game'
+
+    snake: snake
+
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint: 1, 0.1
+            Button:
+                text: 'menu'
+                on_release:
+                    app.root.current = 'menu'
+                    app.root.transition.direction = 'right'
+                    app.root.clearcolor = (.1, .8, .9, 9)
+                    root.snake.reset()
+            Button:
+                text: 'b'
+                on_release:
+                    
+
+        Snake:
+            id: snake
+        
+
+<Square>:
+    canvas:
+        Color:
+            rgb: (self.r, self.g, self.b, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<Snake>:
+
+
+        
+
+        
