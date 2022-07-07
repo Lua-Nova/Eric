@@ -22,6 +22,7 @@ class Game():
             y = random.randint(0,self.rows -1)
         
         self.grid[y][x] = True
+        return x, y
 
     # move the snake
     # remove fruits that the snake head eats
@@ -43,9 +44,9 @@ class Game():
         else:
             print('Error Key not Found')
 
-        print(self.snake_pos)
         self.snake_pos.append((new_x,new_y))
         if self.grid[new_y][new_x] == False:
+            
             self.snake_pos.pop(0)
             return False
         else:
@@ -54,17 +55,30 @@ class Game():
         
 
     def new_game(self):
-        self.grid = [[False]*self.cols]*self.rows
+        self.grid = [[False]*self.cols for i in range(self.rows)]
         self.snake_pos = [(self.rows//2 - 1, self.cols//2), (self.rows//2, self.cols//2), (self.rows//2 +1, self.cols//2)] # stack of (y, x)
-        # self.create_fruit()
 
 
     def collision_check(self, direction):
         x,y = self.snake_pos[-1]
+        if direction == "U":
+            y = y + 1
+        
+        elif direction == "D":
+            y = y - 1
+        
+        elif direction == "L":
+            x = x - 1
+        
+        elif direction == "R":
+            x = x + 1
+
+        else:
+            print("invalid direction!!")
         # hit a wall
-        if x >= self.rows and x < 0:
+        if x >= self.rows or x < 0:
             return True
-        elif y >= self.cols and y < 0:
+        elif y >= self.cols or y < 0:
             return True
 
         # hit yourself

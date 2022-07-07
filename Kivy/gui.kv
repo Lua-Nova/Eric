@@ -6,6 +6,7 @@ WindowManager:
     Menu:
     
     Game:
+        id: game
     
 <Menu@Screen>:
     name: 'menu'
@@ -44,6 +45,7 @@ WindowManager:
             app.root.current = 'game'
             app.root.transition.direction = 'left'
             app.root.clearcolor = (.1, .8, .9, 9)
+            # app.root.game.snake.new_game()
         
 
     Button:

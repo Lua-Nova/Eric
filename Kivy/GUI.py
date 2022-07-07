@@ -7,6 +7,7 @@ from kivy.lang import Builder
 from game import Game
 import random
 from kivy.core.window import Window
+from kivy.clock import Clock
 
 class WindowManager(ScreenManager):
     pass
@@ -24,35 +25,51 @@ class Square(Widget):
 class Snake(Widget):
 
     def __init__(self, **kwargs):
+        self.tick_speed = 0.2
+        self.size = (10, 10)
+        self.bind(size=self.update)
         self.square_list = []
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         self.direction = 'R'
         super().__init__(**kwargs)
         self.new_game()
+
+    def update(self, *args):
+        print(self.size)
     
     def _keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None
 
     def move(self):
-        ate_apple = self.game.move(self.direction)
-        tuple = self.game.snake_pos[-1]
-        self.add_square(*tuple, random.random(), random.random(), random.random())
-      
-        if ate_apple:
-            x = 7
-         
+        if self.game.collision_check(self.direction):
+            print("Game Over")
+
         else:
-            self.remove_widget(self.square_list[0])
-            self.square_list.pop(0)
+            ate_apple = self.game.move(self.direction)
+            tuple = self.game.snake_pos[-1]
+            self.add_square(*tuple, random.random(), random.random(), random.random())
+        
+            if ate_apple:
+                self.remove_widget(self.apple)
+                x, y = self.apple_pos
+                self.game.grid[y][x] = False
+                self.apple_pos = self.game.create_fruit()
+                self.add_apple(*self.apple_pos)
+    
+                
+             
+            else:
+                self.remove_widget(self.square_list[0])
+                self.square_list.pop(0)
           
             
 
 
 
 
-    def tick(self):
+    def tick(self, dt):
         self.move()
         # if self.game.collision_check(self.direction) != True:
             
@@ -70,52 +87,50 @@ class Snake(Widget):
             self.direction = 'L'
         elif keycode[1] == 'd' or keycode[1] == 'right':
             self.direction = 'R'
-        self.tick()
         return True
         
     def new_game(self):
-        rows = 10
-        cols = 10
+        rows, cols = self.size
         self.game = Game(rows, cols)
-        self.x = 0
-        self.y = 0
         self.snake_pos = self.game.snake_pos
+        self.apple_pos = self.game.create_fruit()
         
-        for tuple in self.snake_pos:
-            self.add_square(*tuple, random.random(), random.random(), random.random())
+        
+        
             
 
-
-        for x in range(cols + 2):
-            self.add_border(x, 0, .1, .1, .1)
-            self.add_border(x, rows + 1, .1, .1, .1)
-
-        for y in range(rows):
-            self.add_border(0, y + 1, .1 ,.1 ,.1)
-            self.add_border(cols + 1, y + 1, .1, .1, .1)
-
+        for i in range(rows):
+            for j in range(cols):
+                self.add_grid(j, i)
         
-
+        self.add_apple(*self.apple_pos)
+        for tuple in self.snake_pos:
+            self.add_square(*tuple, random.random(), random.random(), random.random())
+        self.timer = Clock.schedule_interval(self.tick, self.tick_speed)
 
     def add_square(self, x, y, r, g, b):
-        x = x + 1
-        y = y + 1
         self.square = Square(120 * x, 80 * y, 105, 70, r, g, b)
         self.square_list.append(self.square)
         self.add_widget(self.square)
-    
-    def add_border(self, x, y, r, g, b):
-        self.square = Square(120 * x, 80 * y, 105, 70, r, g, b)
-        self.add_widget(self.square)
+        
+    def add_apple(self,x,y):
+        self.apple = Square(120 * x, 80 * y, 105, 70, 1, 0, 0)
+        self.add_widget(self.apple)
+
+    def add_grid(self, x, y):
+        square = Square(120 * x, 80 * y, 105, 70, 1, 1, 1)
+        self.add_widget(square)
 
     def reset(self):
         for square in self.square_list:
             self.remove_widget(square)
         self.square_list = []
+        self.remove_widget(self.apple)
+        self.timer.cancel()
+        del self.game
 
 
 
-        
 
 
 
