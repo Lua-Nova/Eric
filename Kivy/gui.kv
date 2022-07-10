@@ -45,7 +45,7 @@ WindowManager:
             app.root.current = 'game'
             app.root.transition.direction = 'left'
             app.root.clearcolor = (.1, .8, .9, 9)
-            # app.root.game.snake.new_game()
+            root.parent.parent.parent.children[0].children[0].children[0].new_game()
         
 
     Button:
@@ -81,6 +81,7 @@ WindowManager:
             Button:
                 text: 'b'
                 on_release:
+                
                     
 
         Snake:
